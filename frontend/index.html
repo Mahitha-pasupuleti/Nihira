@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Test</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script type="module" src="./src/main.jsx"></script>
+
+    <script>
+        // const socket = io("http://localhost:8000");  // Adjust with your backend URL
+        
+        // // Listen for 'receiveMessage' event from the backend
+        // socket.on("receiveMessage", (data) => {
+        //     const messageContainer = document.getElementById("messages");
+        //     messageContainer.innerHTML += `<p>${data.message}</p>`;
+        // });
+        
+        // // Sending message to the server when the button is clicked
+        // document.getElementById("sendMessage").addEventListener("click", () => {
+        //     socket.emit("sendMessage", {
+        //         "senderId": "67bd2ce66830c046fa3a1f94",
+        //         "recipientId": "67bd293d4ebc2b9e33a69687",
+        //         "message": document.getElementById("chat").value
+        //     });
+        // });
+    </script>
+
+</head>
+<body>
+    <!-- <h1>Welcome to Socket.IO Chat Application</h1> -->
+    <!-- <input type="text" name="chat" id="chat" placeholder="Send a Message"/>
+    <button id="sendMessage">Send Message</button> -->
+    
+    <!-- <div id="messages"></div> -->
+
+    <div id="root"></div>
+</body>
+</html>
