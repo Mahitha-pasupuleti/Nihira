@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Navbar from "../Navigations/NavBeforeLogin/Navbar";
 
 export default function RegisterNewUser() {
 
@@ -40,6 +41,7 @@ export default function RegisterNewUser() {
     return (
         <>
             <div>
+                <Navbar />
                 <h1>Sign Up</h1>
                 <p>Sign up today</p>
                 <form onSubmit={addNewUserToDB}>
@@ -48,7 +50,7 @@ export default function RegisterNewUser() {
                     <input type="text" name="username" id="username" placeholder="Enter username" onChange={(e) => setUsername(e.target.value)}/> <br />
                     <input type="password" name="password" id="password" placeholder="Enter password" onChange={(e) => setPassword(e.target.value)}/> <br />
                     <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm password" onChange={(e) => setConfirmPassword(e.target.value)}/> <br />
-                    <button type="submit" onClick={addNewUserToDB}>Sign Up</button>
+                    <button type="submit">Sign Up</button>
                 </form>
 
                 <p>{message}</p>

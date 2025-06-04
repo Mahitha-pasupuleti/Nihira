@@ -1,21 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "universal-cookie";
-import MainDashboard from "../Dashboard/Dashboard";
-import { router } from "../../main";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import Navbar from "../Navigations/NavBeforeLogin/Navbar";
 
-function UserLogin() {
+export default function Login() {
 
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [message, setMessage] = useState("");
-    const [userLoggedIn, setUserLoggedIn] = useState(false);
-    const [redirect, setRedirect] = useState(false);
-
-    if ( userLoggedIn == true ) {
-        return <Navigate to="/Dashboard" />
-    }
+    const navigate = useNavigate();
 
     const loginExistingUser = async (event) => {
         event.preventDefault()
@@ -37,28 +31,40 @@ function UserLogin() {
             });
 
             const responseData = await response.json();
-            console.log("objectId: ", responseData.data.user._id);
-            console.log("AccessToken: ", responseData.data.accessToken);
+            // console.log("objectId: ", responseData.data.user._id);
+            // console.log("AccessToken: ", responseData.data.accessToken);
 
             const AuthToken = responseData.data.accessToken;
             const objectId = responseData.data.user._id;
             const decode = jwtDecode(responseData.data.accessToken);
             console.log(decode);
+            // console.log(response.status);
 
             if ( response.status == 200 ) {
                 setMessage("User logged in successfully!!")
                 cookies.set("Authorization", AuthToken);
                 cookies.set("objectId", objectId);
-                setUserLoggedIn(true);
+                cookies.set("isAuthenticated", true);
 
                 // clear username and password
                 setUsername("")
                 setPassword("")
+
+                console.log("Waiting 5 seconds before navigating to dashboard...");
+                
+                // setTimeout(() => {
+                //     console.log("Navigating to dashboard...");
+                //     navigate("/dashboard");
+                // }, 5000)
+
+                window.location.href = "/dashboard";
+
             } else if ( response.status == 404 ) {
                 setMessage("User does not exists!")
             } else {
                 setMessage("An error occurred. Please try again")
             }
+
         } catch(error) {
             console.log("error")
         }
@@ -67,6 +73,7 @@ function UserLogin() {
     return (
         <>
             <div>
+                <Navbar />
                 <h1>Login</h1>
                 <p>Login to continue chatting</p>
                 <form onSubmit={loginExistingUser}>
@@ -82,5 +89,3 @@ function UserLogin() {
         </>
     )
 }
-
-export default UserLogin

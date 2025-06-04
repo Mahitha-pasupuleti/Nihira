@@ -8,6 +8,9 @@ import { handleSocketEvents } from "./controllers/socket.controller.js"
 import { authenticationHandler } from "./controllers/authentication.controller.js"
 import { ApiError } from "./utils/ApiError.js";
 import communicationRouter from './routes/communication.routes.js'
+import {
+  removeUserBySocketId
+} from "./utils/onlineUsers.js";
 
 const app = express();
 
@@ -44,8 +47,10 @@ io.on("connection", (socket) => {
 
     // Handle user disconnect
     socket.on("disconnect", () => {
+        removeUserBySocketId(socket.id)
         console.log("❌ Client disconnected:", socket.id);
     });
+    
 });
 
 // Explore more about cors

@@ -11,10 +11,21 @@ const SocketContextProvider = ({ children }) => {
     const cookies = new Cookies();
 
     useEffect(() => {
+        const token = cookies.get("Authorization");
+        const userId = cookies.get("objectId");
+        
+        if ( !token || !userId ) return; // Wait until the cookie exists
+
         socketRef.current = io("http://localhost:8000", {
             extraHeaders: {
-                "authorization": "Bearer " + cookies.get("Authorization")
+                "authorization": "Bearer " + token
             }
+        })
+
+        const currentSocket = socketRef.current;
+
+        currentSocket.on("connect", () => {
+            currentSocket.emit("register", userId);
         })
         
         setSocket(socketRef.current);
@@ -22,7 +33,7 @@ const SocketContextProvider = ({ children }) => {
         return () => {
             socketRef.current.disconnect();
         }
-    }, [])
+    }, [cookies.get("Authorization")]);
 
     return (
         <SocketContext.Provider value={socket}>

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import UserLogin from "../UserLogin/Login";
-import RegisterNewUser from "../UserRegistration/Registration";
+// import UserLogin from "../../Pages/Login/Login";
+// import RegisterNewUser from "../../Pages/SignUp/SignUp";
 
 export default function SignUp_Login() {
     const [active, setActive] = useState(false)

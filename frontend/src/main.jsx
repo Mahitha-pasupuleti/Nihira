@@ -1,34 +1,20 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
 import App from "./App.jsx"
-
-import SignUp_Login from "./NewUserComponents/SignUp_Login/SignUp_Login.jsx";
-import MainDashboard from "./NewUserComponents/Dashboard/Dashboard.jsx";
-import HomePage from "./NewUserComponents/HomePage/HomePage.jsx";
-
-import {
-    createBrowserRouter,
-    createRoutesFromElements,
-    Route,
-    RouterProvider,
-} from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import SocketContextProvider from "./Contexts/Socket/SocketContextProvider.jsx";
+import Cookies from "universal-cookie"
 
-export const router = createBrowserRouter(
-    createRoutesFromElements(
-        <Route path="/" element={<App />} >
-            <Route index element={<HomePage />} />
-            <Route path="SignUp_Login" element={<SignUp_Login />}/>
-            <Route path="Dashboard" element={<MainDashboard />}/>
-        </Route>
-    )
-);
+const cookies = new Cookies();
+const isAuthenticated = cookies.get("isAuthenticated");
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <React.StrictMode>
-        <SocketContextProvider>
-            <RouterProvider router={router} />
-        </SocketContextProvider>
+        <Router>
+            <SocketContextProvider>
+                <App />
+            </SocketContextProvider>
+        </Router>
     </React.StrictMode>,
 );

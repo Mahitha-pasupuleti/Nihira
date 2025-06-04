@@ -1,5 +1,5 @@
 import Cookies from "universal-cookie"; 
-import SocketContext from "../../Contexts/Socket/SocketContext";
+import SocketContext from "../../../Contexts/Socket/SocketContext";
 import { useContext } from "react";
 
 export default function sendingMessage({ message, setMessage }) {
