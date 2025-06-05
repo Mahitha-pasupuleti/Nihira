@@ -1,7 +1,4 @@
 
-// import sendingMessage from "./sendingMessage";
-// import DisplayMessages from "./DisplayMessages";
-
 import { useEffect, useRef, useState } from "react";
 import { useContext } from "react";
 import SocketContext from "../../Contexts/Socket/SocketContext";
@@ -17,10 +14,15 @@ export default function MainDashboard() {
     const [messageInput, setMessageInput] = useState("");
     const [messages, setMessages] = useState([]);
     const [friend, setFriend] = useState("");
+    const [hasMore, setHasMore] = useState(false);
+    const [page, setPage] = useState(1);
 
     const socket = useContext(SocketContext);
     const cookies = new Cookies();
     const token = cookies.get("Authorization");
+    const messagesRef = useRef(null);
+    const currentUserId = cookies.get("objectId");
+
 
     useEffect(() => {
         if (!socket) {
@@ -43,7 +45,104 @@ export default function MainDashboard() {
     }, [socket]);
 
 
+    useEffect(() => {
+        if (!friend) {
+            console.warn("Friend is not yet selected");
+            return;
+        }
+
+        const fetchMessages = async () => {
+            try {
+                const response = await fetch("http://localhost:8000/api/v1/communications/conversation", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: token
+                    },
+                    body: JSON.stringify({
+                        userId: currentUserId,
+                        friendId: friend,
+                        page: 1,
+                        pageSize: 25
+                    })
+                })
+
+                const conversation = await response.json();
+                const processedMessages = conversation.data.messages.map(msg => ({
+                    ...msg,
+                    type: msg.senderId === currentUserId ? "sent" : "received"
+                }))
+                setMessages( processedMessages );
+                setHasMore( conversation.data.hasMore )
+                setPage(1);
+
+            } catch (error) {
+                console.error("Error loading messages:", error);
+            }
+        }
+
+        fetchMessages();
+    }, [friend])
+
+
+    // useEffect(() => {
+    //     if (messagesRef.current) {
+    //         messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    //     }
+    // }, [messages]);
+
+    
+    useEffect(() => {
+        if (!messagesRef.current) return;
+
+        const { scrollTop, scrollHeight, clientHeight } = messagesRef.current;
+        const isNearBottom = scrollHeight - scrollTop - clientHeight < 50; // threshold
+
+        if (isNearBottom) {
+            messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+        }
+    }, [messages]);
+
+
+    const handleScroll = async () => {
+        if ( !hasMore || !friend || !messagesRef.current ) return;
+
+        if ( messagesRef.current.scrollTop === 0 ) {
+            try {
+                const nextPage = page + 1;
+                const response = await fetch("http://localhost:8000/api/v1/communications/conversation", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: token,
+                    },
+                    body: JSON.stringify({
+                        userId: currentUserId,
+                        friendId: friend,
+                        page: nextPage,
+                        pageSize: 25
+                    })
+                })
+
+                const conversation = await response.json();
+                const processedMessages = conversation.data.messages.map(msg => ({
+                    ...msg,
+                    type: msg.senderId === currentUserId ? "sent" : "received"
+                }))
+
+                setMessages(prev => [...processedMessages, ...prev]);
+                setHasMore( conversation.data.hasMore )
+                setPage(nextPage)
+
+            } catch (error) {
+                console.error("Error loading more messages:", error);
+            }
+        }
+    }
+
+
     const sendProps = () => {
+        if ( !friend ) return;
         const outgoingMessage = {
             "senderId": cookies.get("objectId"),
             "recipientId": friend,
@@ -63,7 +162,7 @@ export default function MainDashboard() {
             <div className="typeMessage">
                 <input type="text" placeholder="Write Your Message" value={messageInput} onChange={(e)=>setMessageInput(e.target.value)} />
                 <br />
-                <label for="chooseFriend">Choose a friend:</label>
+                <label htmlFor="chooseFriend">Choose a friend:</label>
                 <select id="chooseFriend" name="chooseFriend" value={friend} onChange={(e)=>setFriend(e.target.value)} >
                     <option value="">Select a friend</option>
                     <option value="683f38d078a15614164b9578">A</option>
@@ -79,7 +178,7 @@ export default function MainDashboard() {
 
             <hr />
 
-            <div className="messages">
+            <div className="messages" ref={messagesRef} onScroll={handleScroll}>
                 {messages.map((msg, index) => (
                     <div
                         key={index}

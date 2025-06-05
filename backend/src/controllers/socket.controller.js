@@ -2,7 +2,7 @@ import Message from "../models/message.model.js";
 
 const onlineUsers = new Map();
 
-export const handleSocketEvents = (socket, io) => {
+export const handleSocketEvents = async (socket, io) => {
 
     socket.on("register", (userId) => {
         onlineUsers.set(userId, socket.id);
@@ -21,7 +21,12 @@ export const handleSocketEvents = (socket, io) => {
             });
 
             console.log(newMessage);
-            await newMessage.save(); // commented so every chat message is not saved, uncomment to save chat messages
+            
+            console.log("Saving message...");
+            await newMessage.save();
+            console.log("Message saved.");
+
+            // commented so every chat message is not saved, uncomment to save chat messages
 
             const recipientSocketId = onlineUsers.get(data.recipientId);
             console.log(recipientSocketId)
