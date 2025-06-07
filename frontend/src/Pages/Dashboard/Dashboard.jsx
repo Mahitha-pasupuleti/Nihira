@@ -9,7 +9,7 @@ import "./Dashboard.css";
 // get AccessToken from UserLogin
 // implement sending and recieving messages from server
 // send request to socket.io to connect
-export default function MainDashboard() {
+export default function Dashboard() {
 
     const [messageInput, setMessageInput] = useState("");
     const [messages, setMessages] = useState([]);
@@ -20,7 +20,6 @@ export default function MainDashboard() {
     const socket = useContext(SocketContext);
 
     const messagesRef = useRef(null);
-    const scrollPosRef = useRef(0);
     const scrollHeightRef = useRef(0);
 
     const cookies = new Cookies();

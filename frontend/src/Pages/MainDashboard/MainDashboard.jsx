@@ -1,0 +1,73 @@
+import { useContext, useEffect, useState } from "react";
+import Cookies from "universal-cookie";
+import SocketContext from "../../Contexts/Socket/SocketContext";
+import MainNav from "../Navigations/NavAfterLogin/MainNav";
+
+import ChatHeader from "./Chat/ChatHeader";
+import ChatBox from "./Chat/ChatBox";
+import ChatInput from "./Chat/ChatInput";
+import useMessages from "./hooks/useMessages";
+import useSocketMessages from "./hooks/useSocketMessages";
+
+import "./MainDashboard.css";
+import SearchFriends from "./SearchFriends/SearchFriends";
+import Sidebar from "./Sidebar.jsx/Sidebar";
+
+export default function MainDashboard() {
+    const socket = useContext(SocketContext);
+
+    const cookies = new Cookies();
+    const token = cookies.get("Authorization");
+    const currentUserId = cookies.get("objectId");
+
+    const [friend, setFriend] = useState("");
+    const [messageInput, setMessageInput] = useState("");
+
+    const {messages, setMessages, hasMore, page, fetchMessages} = useMessages(token, currentUserId);
+
+    useSocketMessages(socket, setMessages);
+
+    useEffect(() => {
+        if ( friend ) {
+            fetchMessages( friend, false );
+        }
+    }, [friend])
+
+    const onSend = () => {
+        if ( !friend ) return;
+        const outgoingMessage = {
+            "senderId": currentUserId,
+            "recipientId": friend,
+            "message": messageInput
+        }
+        socket.emit("sendMessage", outgoingMessage);
+        setMessages( (prev) => [...prev, { ...outgoingMessage, type: "sent" } ] )
+        setMessageInput("");
+    }
+
+    const handleScroll = (event) => {
+        console.log("Scrolling")
+        const { scrollTop } = event.target;
+        if (scrollTop < 10 && hasMore) {
+            console.log("Loading more messages brooooo!")
+            fetchMessages(friend, true);
+        }
+    };
+
+    return (
+    <>
+        <MainNav />
+        <div className="chat-container">
+        <Sidebar friend={friend} setFriend={setFriend} />
+        {/* <ChatHeader friend={friend} setFriend={setFriend} /> */}
+        <ChatBox messages={messages} onScroll={handleScroll} />
+        <ChatInput
+            messageInput={messageInput}
+            setMessageInput={setMessageInput}
+            onSend={onSend}
+        />
+        </div>
+    </>
+    );
+
+}

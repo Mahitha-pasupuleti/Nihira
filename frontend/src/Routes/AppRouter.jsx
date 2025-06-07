@@ -3,8 +3,9 @@ import SignUp from "../Pages/SignUp/SignUp"
 import Login from '../Pages/Login/Login';
 import ProtectedRoutes from "./ProtectedRoutes";
 import PublicRoutes from "./PublicRoutes";
-import MainDashboard from "../Pages/Dashboard/Dashboard";
+import Dashboard from "../Pages/Dashboard/Dashboard";
 import Logout from "../Pages/Logout/Logout";
+import MainDashboard from "../Pages/MainDashboard/MainDashboard";
 
 export default function AppRouter() {
     return (
@@ -17,7 +18,8 @@ export default function AppRouter() {
                 </Route>
                 <Route element={<ProtectedRoutes />} >
                     <Route path="/logout" element={<Logout />} />
-                    <Route path="/dashboard" element={<MainDashboard />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/mainDashboard" element={<MainDashboard />} />
                 </Route>
             </Routes>
         </>

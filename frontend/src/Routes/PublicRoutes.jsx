@@ -5,5 +5,5 @@ export default function PublicRoutes() {
     const cookies = new Cookies();
     const auth = cookies.get("isAuthenticated");
     console.log("auth " + auth);
-    return auth ? <Navigate to="/dashboard" /> : <Outlet />;
+    return auth ? <Navigate to="/mainDashboard" /> : <Outlet />;
 }
