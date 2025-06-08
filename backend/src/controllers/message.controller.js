@@ -24,7 +24,7 @@ const getConversation = asyncHandler( async (req, res) => {
                 { senderId: friendId, recipientId: userId }
             ]
         })
-        .sort({ createdAt: -1 })
+        .sort({ timestamp: -1 })
         .skip(skip)
         .limit(pageSize)
 

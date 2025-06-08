@@ -22,8 +22,9 @@ export default function useMessages(token, currentUserId) {
       });
 
       const conversation = await response.json();
+      const reverseConversation = conversation.data.messages.reverse();
 
-      const processedMessages = conversation.data.messages.map((msg) => ({
+      const processedMessages = reverseConversation.map((msg) => ({
         ...msg,
         type: msg.senderId === currentUserId ? "sent" : "received",
       }));
