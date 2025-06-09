@@ -10,8 +10,11 @@ export default function useSocketMessages(socket, setMessages) {
             }
     
             const handleIncomingMessage = (incomingMessage) => {
-                console.log("Received message:", incomingMessage); // Confirm message received
+                // console.log("Received message:", incomingMessage); // Confirm message received
                 setMessages((prev) => [...prev, { ...incomingMessage, type: "received" }]);
+
+                // Emit delivery acknowledgement after receiving message
+                socket.emit("messageDelivered", incomingMessage._id)
             };
     
             socket.on("receiveMessage", handleIncomingMessage);

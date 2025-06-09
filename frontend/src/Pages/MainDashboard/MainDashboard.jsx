@@ -8,6 +8,7 @@ import ChatBox from "./Chat/ChatBox";
 import ChatInput from "./Chat/ChatInput";
 import useMessages from "./hooks/useMessages";
 import useSocketMessages from "./hooks/useSocketMessages";
+import useEmitMessageRead from "./hooks/useEmitMessageRead";
 
 import "./MainDashboard.css";
 import SearchFriends from "./SearchFriends/SearchFriends";
@@ -32,6 +33,8 @@ export default function MainDashboard() {
             fetchMessages( friend, false );
         }
     }, [friend])
+
+    useEmitMessageRead({ friend, socket, userId: currentUserId });
 
     const onSend = () => {
         if ( !friend ) return;
