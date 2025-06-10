@@ -1,8 +1,11 @@
 // Socket receive/send logic
 
 import { useEffect } from "react";
+import { fetchUsername } from "./useFetchUsername";
 
 export default function useSocketMessages(friend, socket, setMessages) {
+    const friendUsername = fetchUsername(friend);
+
     useEffect(() => {
             if (!socket) {
                 console.warn("Socket not ready yet.");
@@ -11,7 +14,9 @@ export default function useSocketMessages(friend, socket, setMessages) {
     
             const handleIncomingMessage = (incomingMessage) => {
                 console.log("Received message:", incomingMessage); // Confirm message received
-                setMessages((prev) => [...prev, { ...incomingMessage, type: "received" }]);
+                if ( friend == incomingMessage.senderId ) {
+                    setMessages((prev) => [...prev, { ...incomingMessage, type: "received", senderUsername: friendUsername  }]);
+                }
 
                 // Emit delivery acknowledgement after receiving message
                 socket.emit("messageDelivered", incomingMessage._id)

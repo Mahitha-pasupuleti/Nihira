@@ -18,7 +18,7 @@ export default function AppRouter() {
                 </Route>
                 <Route element={<ProtectedRoutes />} >
                     <Route path="/logout" element={<Logout />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
+                    {/* <Route path="/dashboard" element={<Dashboard />} /> */}
                     <Route path="/mainDashboard" element={<MainDashboard />} />
                 </Route>
             </Routes>

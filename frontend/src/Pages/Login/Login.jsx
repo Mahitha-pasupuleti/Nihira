@@ -57,7 +57,7 @@ export default function Login() {
                 //     navigate("/dashboard");
                 // }, 5000)
 
-                window.location.href = "/dashboard";
+                window.location.href = "/mainDashboard";
 
             } else if ( response.status == 404 ) {
                 setMessage("User does not exists!")

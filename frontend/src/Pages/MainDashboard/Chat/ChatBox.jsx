@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import "./ChatBox.css"; 
 
 // Message list + scroll handling
 export default function ChatBox({ messages, onScroll }) {
@@ -10,6 +11,19 @@ export default function ChatBox({ messages, onScroll }) {
         }
     }, [messages]);
 
+    const getStatusIcon = (status) => {
+        switch (status) {
+            case "sent":
+                return <span className="tick sent">✔</span>
+            case "delivered":
+                return <span className="tick delivered">✔✔</span>;
+            case "read":
+                return <span className="tick read">✔✔</span>;
+            default:
+                return null;
+        }
+    };
+
     return (
     <div className="messages" ref={messagesRef} onScroll={onScroll}>
       {messages.map((msg, idx) => (
@@ -17,7 +31,12 @@ export default function ChatBox({ messages, onScroll }) {
           key={idx}
           className={`message-bubble ${msg.type === "sent" ? "sent-message" : "received-message"}`}
         >
-          <strong>{msg.senderUsername}</strong>:<br />{msg.message}
+            <div className="message-content">
+                <strong>{msg.senderUsername}</strong>:<br />{msg.message}
+            </div>
+            {msg.type === "sent" && (
+                <div className="status">{ getStatusIcon(msg.status) }</div>
+            )}
         </div>
       ))}
     </div>

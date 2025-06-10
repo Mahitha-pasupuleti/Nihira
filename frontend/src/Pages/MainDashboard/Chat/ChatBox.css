@@ -1,0 +1,25 @@
+.message-content {
+  margin-bottom: 4px;
+}
+
+.status {
+  font-size: 0.8rem;
+  text-align: right;
+  margin-top: 2px;
+}
+
+.tick {
+  font-size: 14px;
+}
+
+.tick.sent {
+  color: gray;
+}
+
+.tick.delivered {
+  color: darkgray;
+}
+
+.tick.read {
+  color: blue;
+}

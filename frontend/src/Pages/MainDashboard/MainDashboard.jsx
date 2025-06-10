@@ -13,6 +13,7 @@ import useEmitMessageRead from "./hooks/useEmitMessageRead";
 import "./MainDashboard.css";
 import SearchFriends from "./SearchFriends/SearchFriends";
 import Sidebar from "./Sidebar.jsx/Sidebar";
+import { fetchUsername } from "./hooks/useFetchUsername";
 
 export default function MainDashboard() {
     const socket = useContext(SocketContext);
@@ -20,8 +21,9 @@ export default function MainDashboard() {
     const cookies = new Cookies();
     const token = cookies.get("Authorization");
     const currentUserId = cookies.get("objectId");
+    const currentUsername = fetchUsername(currentUserId);
 
-    const [friend, setFriend] = useState("");
+    const [friend, setFriend] = useState(currentUserId);
     const [messageInput, setMessageInput] = useState("");
 
     const {messages, setMessages, hasMore, page, fetchMessages} = useMessages(token, currentUserId);
@@ -47,7 +49,7 @@ export default function MainDashboard() {
             "message": messageInput
         }
         socket.emit("sendMessage", outgoingMessage);
-        setMessages( (prev) => [...prev, { ...outgoingMessage, type: "sent" } ] )
+        setMessages( (prev) => [...prev, { ...outgoingMessage, type: "sent", senderUsername: currentUsername } ] )
         setMessageInput("");
     }
 
