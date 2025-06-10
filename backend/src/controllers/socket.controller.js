@@ -31,7 +31,7 @@ export const handleSocketEvents = async (socket, io) => {
     socket.on("messageRead", async ({ userId, friendId }) => {
         try {
             const converseId = [userId, friendId].sort().join(':');
-            console.log(converseId)
+            console.log("userId : " + userId + " friendId : " + friendId + " converseId : " + converseId);
             const deliveredToRead = await Message.updateMany(
                 {
                     conversationId: converseId,

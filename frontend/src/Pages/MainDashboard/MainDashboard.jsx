@@ -26,7 +26,7 @@ export default function MainDashboard() {
 
     const {messages, setMessages, hasMore, page, fetchMessages} = useMessages(token, currentUserId);
 
-    useSocketMessages(socket, setMessages);
+    useSocketMessages(friend, socket, setMessages);
 
     useEffect(() => {
         if ( friend ) {
@@ -34,7 +34,10 @@ export default function MainDashboard() {
         }
     }, [friend])
 
-    useEmitMessageRead({ friend, socket, userId: currentUserId });
+    useEffect(() => {
+        if ( !friend || !socket ) return;
+        useEmitMessageRead({ friend, socket, userId: currentUserId });
+    }, [friend, socket])
 
     const onSend = () => {
         if ( !friend ) return;

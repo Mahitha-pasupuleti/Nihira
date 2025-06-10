@@ -28,7 +28,7 @@ const io = new Server(server, {
 // We are using a middleware
 io.use( async (socket, next) => {
     const authHeader = socket.handshake.headers['authorization']
-    console.log(authHeader)
+    // console.log(authHeader)
 
     if ( await authenticationHandler(authHeader) == true ) {
         console.log("Connect")

@@ -5,6 +5,29 @@ export default function useMessages(token, currentUserId) {
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
 
+  const fetchUsername = async (userId) => {
+    try {
+        const response = await fetch("http://localhost:8000/api/v1/communications/username", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+        });
+
+        if (!response.ok) {
+        throw new Error("Failed to fetch username");
+        }
+
+        const data = await response.json();
+        return data.data.username; // Adjust if your backend response shape is different
+    } catch (error) {
+        console.error("❌ Error fetching username:", error);
+        return null;
+    }
+};
+
+
   const fetchMessages = useCallback(async (friend, isPaginated = false) => {
     try {
       const response = await fetch("http://localhost:8000/api/v1/communications/conversation", {
@@ -21,12 +44,19 @@ export default function useMessages(token, currentUserId) {
         }),
       });
 
+      // Fetching user names
+      const currentUsername = fetchUsername(currentUserId);
+      const friendUsername = fetchUsername(friend);
+
+      // Fetching messages
       const conversation = await response.json();
       const reverseConversation = conversation.data.messages.reverse();
 
+      // Processing fetched messages
       const processedMessages = reverseConversation.map((msg) => ({
         ...msg,
         type: msg.senderId === currentUserId ? "sent" : "received",
+        senderUsername: msg.senderId === currentUserId ? currentUsername : friendUsername
       }));
 
       setMessages((prev) => isPaginated ? [...processedMessages, ...prev] : processedMessages);
