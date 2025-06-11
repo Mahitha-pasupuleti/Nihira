@@ -20,18 +20,70 @@ export const handleSocketEvents = async (socket, io) => {
     // Handles message delivery status update (DELIVERED)
     socket.on("messageDelivered", async (messageId) => {
         try {
-            await Message.findByIdAndUpdate(messageId, { status: 'delivered' });
+            console.log("Entered Delivered Emit")
+            const msg = await Message.findByIdAndUpdate(messageId, { status: 'delivered' }, { new: true });
+
+            if (!msg) {
+                console.warn(`⚠️ Message with ID ${messageId} not found`);
+                return;
+            }
+
             console.log(`✅ Message ${messageId} marked as delivered`);
+
+            // notify the sender
+            const senderSocketId = onlineUsers.get(msg.senderId.toString());
+            if (senderSocketId) {
+                io.to(senderSocketId).emit("messageDelivered", {
+                    _id: msg._id.toString(),
+                    status: "delivered",
+                });
+            }
+            console.log("Leaving Delivered Emit")
+        } catch (err) {
+            console.error("❌ Failed to update message as delivered:", err);
+        }
+    });
+
+    socket.on("messageRead", async (messageId) => {
+        try {
+            console.log("Entered Read Emit")
+            const msg = await Message.findByIdAndUpdate(messageId, { status: 'read' }, { new: true });
+
+            if (!msg) {
+                console.warn(`⚠️ Message with ID ${messageId} not found`);
+                return;
+            }
+
+            console.log(`✅ Message ${messageId} marked as read`);
+
+            // notify the sender
+            const senderSocketId = onlineUsers.get(msg.senderId.toString());
+            if (senderSocketId) {
+                io.to(senderSocketId).emit("messageRead", {
+                    _id: msg._id.toString(),
+                    status: "read",
+                });
+            }
+            console.log("Leaving Read Emit")
         } catch (err) {
             console.error("❌ Failed to update message as delivered:", err);
         }
     });
 
 
-    socket.on("messageRead", async ({ userId, friendId }) => {
+    socket.on("messageReadUponChatOpen", async ({ userId, friendId }) => {
         try {
+            console.log("Entered ReadAllMessages Emit")
             const converseId = [userId, friendId].sort().join(':');
             console.log("userId : " + userId + " friendId : " + friendId + " converseId : " + converseId);
+
+            // Find all delivered messages for this conversation that were received by the user
+            const deliveredMessages = await Message.find({
+                conversationId: converseId,
+                recipientId: userId,
+                status: 'delivered'
+            });
+
             const deliveredToRead = await Message.updateMany(
                 {
                     conversationId: converseId,
@@ -40,7 +92,22 @@ export const handleSocketEvents = async (socket, io) => {
                 },
                 { $set: { status: 'read' } }
             );
+
             console.log(`✅ ${deliveredToRead.modifiedCount} messages marked as read for conversation ${converseId}`);
+
+            // Notify original senders about read status
+            for (const msg of deliveredMessages) {
+                const senderSocketId = onlineUsers.get(msg.senderId.toString());
+                if (senderSocketId) {
+                    io.to(senderSocketId).emit("messageRead", {
+                        _id: msg._id.toString(),
+                        status: "read"
+                    });
+                }
+            }
+
+            console.log("Leaving ReadAllMessages Emit")
+
         } catch (err) {
             console.error("❌ Failed to update messages as read:", err);
         }

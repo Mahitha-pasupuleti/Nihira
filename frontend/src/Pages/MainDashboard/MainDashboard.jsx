@@ -28,7 +28,7 @@ export default function MainDashboard() {
 
     const {messages, setMessages, hasMore, page, fetchMessages} = useMessages(token, currentUserId);
 
-    useSocketMessages(friend, socket, setMessages);
+    useSocketMessages(currentUserId, friend, socket, setMessages);
 
     useEffect(() => {
         if ( friend ) {
@@ -41,6 +41,7 @@ export default function MainDashboard() {
         useEmitMessageRead({ friend, socket, userId: currentUserId });
     }, [friend, socket])
 
+
     const onSend = () => {
         if ( !friend ) return;
         const outgoingMessage = {
@@ -49,7 +50,7 @@ export default function MainDashboard() {
             "message": messageInput
         }
         socket.emit("sendMessage", outgoingMessage);
-        setMessages( (prev) => [...prev, { ...outgoingMessage, type: "sent", senderUsername: currentUsername } ] )
+        setMessages( (prev) => [...prev, { ...outgoingMessage, type: "sent", senderUsername: currentUsername, status: "sent" } ] )
         setMessageInput("");
     }
 
