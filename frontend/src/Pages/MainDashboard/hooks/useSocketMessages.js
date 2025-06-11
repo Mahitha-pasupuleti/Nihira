@@ -35,6 +35,7 @@ export default function useSocketMessages(currentUserId, friend, socket, setMess
 
             // ✅ Message has been marked as delivered (ACK from server)
             const handleMessageDeliveredAck = ({ messageId }) => {
+                console.log("Inside handleMessageDeliveredAck")
                 setMessages((prev) =>
                     prev.map((msg) =>
                         msg._id === messageId ? { ...msg, status: "delivered" } : msg
@@ -44,6 +45,7 @@ export default function useSocketMessages(currentUserId, friend, socket, setMess
 
             // ✅ Message(s) have been marked as read (ACK from server)
             const handleMessagesRead = ({ messageId }) => {
+                console.log("Inside handleMessagesRead")
                 setMessages((prev) =>
                     prev.map((msg) =>
                         msg._id === messageId ? { ...msg, status: "read" } : msg
@@ -52,6 +54,7 @@ export default function useSocketMessages(currentUserId, friend, socket, setMess
             };
 
             const handleMessageReadUponChatOpen = ({ messageIds }) => {
+                console.log("Inside handleMessageReadUponChatOpen")
                 if (!Array.isArray(messageIds)) return;
 
                 setMessages(prev =>
@@ -64,16 +67,16 @@ export default function useSocketMessages(currentUserId, friend, socket, setMess
             };
     
             socket.on("receiveMessage", handleIncomingMessage);
-            socket.on("messageDeliveredAck", handleMessageDeliveredAck);
-            socket.on("messagesRead", handleMessagesRead);
+            socket.on("messageDelivered", handleMessageDeliveredAck);
+            socket.on("messageRead", handleMessagesRead);
             socket.on("messageReadUponChatOpen", handleMessageReadUponChatOpen);
             console.log("🧲 Socket listeners added");
     
             // 🧹 Cleanup on unmount
             return () => {
                 socket.off("receiveMessage", handleIncomingMessage);
-                socket.off("messageDeliveredAck", handleMessageDeliveredAck);
-                socket.off("messagesRead", handleMessagesRead);
+                socket.off("messageDelivered", handleMessageDeliveredAck);
+                socket.off("messageRead", handleMessagesRead);
                 socket.off("messageReadUponChatOpen", handleMessageReadUponChatOpen);
                 console.log("🚿 Socket listeners removed");
             };

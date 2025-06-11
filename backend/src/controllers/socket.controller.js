@@ -35,7 +35,7 @@ export const handleSocketEvents = async (socket, io) => {
             if (senderSocketId) {
                 io.to(senderSocketId).emit("messageDelivered", {
                     _id: msg._id.toString(),
-                    status: "delivered",
+                    // status: "delivered",
                 });
             }
             console.log("Leaving Delivered Emit")
@@ -61,7 +61,7 @@ export const handleSocketEvents = async (socket, io) => {
             if (senderSocketId) {
                 io.to(senderSocketId).emit("messageRead", {
                     _id: msg._id.toString(),
-                    status: "read",
+                    // status: "read",
                 });
             }
             console.log("Leaving Read Emit")
@@ -99,9 +99,9 @@ export const handleSocketEvents = async (socket, io) => {
             for (const msg of deliveredMessages) {
                 const senderSocketId = onlineUsers.get(msg.senderId.toString());
                 if (senderSocketId) {
-                    io.to(senderSocketId).emit("messageRead", {
+                    io.to(senderSocketId).emit("messageReadUponChatOpen", {
                         _id: msg._id.toString(),
-                        status: "read"
+                        // status: "read"
                     });
                 }
             }
