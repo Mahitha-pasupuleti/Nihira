@@ -1,4 +1,4 @@
-# Nihira – Real-Time Chat Application
+# Nihira, A Real-Time Chat Application
 
 **Nihira** is a scalable, modular, and real-time chat application built using a microservices architecture. Designed for performance, security, and extensibility, Nihira mimics production-grade chat systems like WhatsApp, Slack, and Discord—while offering transparency in design and educational value.
 
