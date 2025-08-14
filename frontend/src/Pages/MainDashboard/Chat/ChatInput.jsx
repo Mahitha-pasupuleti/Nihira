@@ -1,3 +1,4 @@
+import "./ChatInput.css";
 
 export default function ChatInput({ messageInput, setMessageInput, onSend }) {
     return (

@@ -2,6 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "concurrently \"nodemon -r dotenv/config --experimental-json-modules src/index.js\" \"node src/Kafka/consumer.js\" \"node src/Kafka/producer.js\""
   },

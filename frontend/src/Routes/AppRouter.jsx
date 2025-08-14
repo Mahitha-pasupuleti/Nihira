@@ -6,6 +6,7 @@ import PublicRoutes from "./PublicRoutes";
 import Dashboard from "../Pages/Dashboard/Dashboard";
 import Logout from "../Pages/Logout/Logout";
 import MainDashboard from "../Pages/MainDashboard/MainDashboard";
+import GroupChatDashboard from "../Pages/MainDashboard/GroupChatDashboard";
 
 export default function AppRouter() {
     return (
@@ -20,6 +21,7 @@ export default function AppRouter() {
                     <Route path="/logout" element={<Logout />} />
                     {/* <Route path="/dashboard" element={<Dashboard />} /> */}
                     <Route path="/mainDashboard" element={<MainDashboard />} />
+                    <Route path="/groupChat" element={<GroupChatDashboard />} />
                 </Route>
             </Routes>
         </>

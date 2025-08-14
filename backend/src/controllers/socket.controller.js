@@ -1,6 +1,9 @@
 import Message from "../models/message.model.js";
+import Group from "../models/group.model.js";
+import GroupMessage from "../models/groupMessage.model.js";
 
 const onlineUsers = new Map();
+const groupMembers = new Map(); 
 
 export const handleSocketEvents = async (socket, io) => {
 
@@ -156,6 +159,82 @@ export const handleSocketEvents = async (socket, io) => {
             });
         }
     })
+
+
+    // Join a group room
+    // socket.on("joinGroup", async ({ groupId, userId }) => {
+    //     const group = await Group.findById(groupId);
+    //     if (!group || !group.members.includes(userId)) {
+    //         return socket.emit("error", { message: "Not authorized for this group" });
+    //     }
+
+    //     socket.join(groupId.toString());
+    //     console.log(`✅ ${userId} joined group ${groupId}`);
+    // });
+
+    socket.on("joinGroup", ({ groupId, userId }) => {
+        socket.join(groupId);
+
+        if (!groupMembers.has(groupId)) groupMembers.set(groupId, new Set());
+        groupMembers.get(groupId).add(userId);
+
+        socket.to(groupId).emit("userJoined", { userId });
+    });
+
+    socket.on("leaveGroup", ({ groupId, userId }) => {
+        socket.leave(groupId);
+
+        if (groupMembers.has(groupId)) {
+            groupMembers.get(groupId).delete(userId);
+        }
+
+        socket.to(groupId).emit("userLeft", { userId });
+    });
+
+    // Send a group message
+    socket.on("sendGroupMessage", async ({ groupId, senderId, senderUsername, message }) => {
+        try {
+            // Save message to DB
+            const newMsg = new GroupMessage({ groupId, senderId, senderUsername, message });
+            await newMsg.save();
+
+            // Emit to everyone in the room
+            io.to(groupId).emit("receiveGroupMessage", newMsg);
+        } catch (err) {
+            console.error("Error sending group message:", err);
+        }
+    });
+
+
+
+
+    // Send group message
+    // socket.on("sendGroupMessage", async ({ groupId, senderId, message }) => {
+    //     try {
+    //         const group = await Group.findById(groupId);
+    //         if (!group || !group.members.includes(senderId)) {
+    //             return socket.emit("error", { message: "Not authorized" });
+    //         }
+
+    //         const newMessage = new GroupMessage({
+    //             groupId,
+    //             senderId,
+    //             message,
+    //             timestamp: new Date()
+    //         });
+
+    //         await newMessage.save();
+
+    //         // Emit to everyone in the group room
+    //         io.to(groupId.toString()).emit("receiveGroupMessage", newMessage);
+
+    //         socket.emit("groupMessageSent", { success: true });
+    //     } catch (err) {
+    //         console.error(err);
+    //         socket.emit("groupMessageSent", { success: false, error: "Failed to send group message" });
+    //     }
+    // });
+
 
 }
 

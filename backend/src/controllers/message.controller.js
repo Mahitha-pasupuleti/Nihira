@@ -6,6 +6,7 @@ import Message from "../models/message.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
+import GroupMessage from "../models/groupMessage.model.js";
 
 const getConversation = asyncHandler( async (req, res) => {
     
@@ -50,4 +51,36 @@ const getConversation = asyncHandler( async (req, res) => {
     
 })
 
-export default getConversation;
+
+// Get all messages for a specific group
+const getGroupMessages = asyncHandler(async (req, res) => {
+  try {
+    const { groupId, page = 1, pageSize = 20 } = req.body;
+    const skip = (page - 1) * pageSize;
+
+    if (!groupId ) {
+      throw new ApiError(400, "Valid groupId is required");
+    }
+
+    console.log(groupId)
+
+    const messages = await GroupMessage.find({ groupId })
+      .sort({ timestamp: -1 }) // oldest first
+      .skip(skip)
+      .limit(pageSize)
+
+    const totalMessageCount = await GroupMessage.countDocuments({ groupId });
+    const hasMore = skip + messages.length < totalMessageCount;
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { messages, hasMore }, "Success"));
+  } catch (error) {
+    throw new ApiError(
+      error?.statusCode || 500,
+      error?.message || "Failed to get group messages"
+    );
+  }
+});
+
+export { getConversation, getGroupMessages };

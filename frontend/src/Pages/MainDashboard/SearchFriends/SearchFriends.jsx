@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import useDebounce from "../hooks/useDebounce";
 import Cookies from "universal-cookie";
 import { getFriends } from "./getFriends";
+import "./SearchFriends.css";
 
 export default function SearchFriends({ friend, setFriend }) {
     const [name, setName] = useState("");
@@ -31,32 +32,31 @@ export default function SearchFriends({ friend, setFriend }) {
     }
 
     return (
-        <>
-            <div>
-                <input 
-                    type="text" 
-                    placeholder="Search a friend..."
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
-                <button onClick={clearSearch}>X</button>
-            </div>
+    <div className="search-friends-container">
+      <div className="search-friends-input-wrapper">
+        <input 
+          type="text" 
+          placeholder="Search a friend..."
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <button onClick={clearSearch}>X</button>
+      </div>
 
-            <div>
-                {friendResults.length === 0 && debouncedName && <p>No users found.</p>}
-                {friendResults.map((friend) => (
-                <div 
-                    key={friend._id}
-                    onClick={() => {
-                        setFriend(friend._id); // Start conversation
-                        clearSearch();         // Optional: reset search input + results
-                    }}
-                    style={{ cursor: "pointer", padding: "6px", borderBottom: "1px solid #ccc" }}
-                >
-                    {friend.username}
-                </div>
-                ))}
-            </div>
-        </>
-    )
+      <div className="search-friends-results">
+        {friendResults.length === 0 && debouncedName && <p>No users found.</p>}
+        {friendResults.map((friend) => (
+          <div 
+            key={friend._id}
+            onClick={() => {
+              setFriend(friend._id);
+              clearSearch();
+            }}
+          >
+            {friend.username}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
