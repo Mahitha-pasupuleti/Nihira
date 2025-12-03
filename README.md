@@ -11,7 +11,6 @@
 * 📨 **Event-Driven Communication** using `Kafka`
 * 🔀 **Efficient Pub/Sub** with `Redis`
 * 🔐 **Secure Authentication** with `JWT`
-* ☁️ **Cloud Deployment Ready** (AWS)
 * 🛠️ **Modern Tech Stack** with best practices in scalability, fault-tolerance, and maintainability
 
 ---
@@ -50,8 +49,6 @@ Client (React) <---> Gateway Service (Express + JWT Auth)
 | **Database**       | MongoDB                     |
 | **Cache/Queue**    | Redis                       |
 | **Authentication** | JWT                         |
-| **Deployment**     | AWS EC2, Docker             |
-| **AI Layer**       | Python + Transformers (NLP) |
 
 ---
 
