@@ -40,6 +40,7 @@ io.use( async (socket, next) => {
 });
 
 // Socket.IO connection handler
+// Change
 io.on("connection", (socket) => {
 
     console.log("🔥 New client connected:", socket.id);

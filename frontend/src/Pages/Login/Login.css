@@ -1,0 +1,70 @@
+/* Center container but left-align internal content */
+.login-container {
+  max-width: 380px;
+  margin: 80px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-align: left;
+  font-family: sans-serif;
+  box-sizing: border-box;   /* <--- ensures padding doesn't affect width */
+}
+
+/* Title */
+.login-container h1 {
+  margin-bottom: 10px;
+  font-size: 28px;
+  color: #333;
+  text-align: center;
+}
+
+.login-container p {
+  color: #666;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Inputs */
+.login-container input {
+  width: 100%;
+  padding: 12px 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: 0.2s;
+  box-sizing: border-box;   /* <--- prevents overflow */
+}
+
+.login-container input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 4px rgba(74, 144, 226, 0.3);
+}
+
+/* Button */
+.login-container button {
+  width: 100%;
+  padding: 12px;
+  background: #4a90e2;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.2s;
+  box-sizing: border-box;   /* <--- keep consistent */
+}
+
+.login-container button:hover {
+  background: #3b78c3;
+}
+
+/* Message */
+.login-message {
+  margin-top: 15px;
+  font-weight: 500;
+  text-align: center;
+}
